@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{APP_TITLE}}</title>
+    <link rel="icon" href="/favicon.ico" type="image/svg+xml">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            background: #0a0a0f;
+            font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+            color: #e0e0e0;
+            padding: 24px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header .subtitle {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 28px;
+            font-size: 13px;
+        }
+
+        .stat { display: flex; align-items: center; gap: 6px; }
+        .stat .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .dot-healthy { background: #00e676; }
+        .dot-unhealthy { background: #ff5252; }
+        .dot-offline { background: #555; }
+        .dot-disabled { background: #2a2a3a; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .pod-card {
+            background: #12121a;
+            border: 1px solid #1e1e2e;
+            border-radius: 12px;
+            padding: 20px;
+            transition: border-color 0.2s, transform 0.15s;
+        }
+
+        .pod-card:hover {
+            border-color: #333;
+            transform: translateY(-2px);
+        }
+
+        .pod-card.healthy { border-left: 3px solid #00e676; }
+        .pod-card.unhealthy { border-left: 3px solid #ff5252; }
+        .pod-card.offline { border-left: 3px solid #555; opacity: 0.6; }
+        .pod-card.disabled { border-left: 3px solid #2a2a3a; opacity: 0.35; }
+        .pod-card.loading { border-left: 3px solid #333; }
+
+        .pod-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .pod-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .pod-status {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pod-status.healthy { background: #00e67620; color: #00e676; }
+        .pod-status.unhealthy { background: #ff525220; color: #ff5252; }
+        .pod-status.offline { background: #55555520; color: #888; }
+        .pod-status.disabled { background: #2a2a3a20; color: #555; }
+        .pod-status.loading { background: #33333320; color: #555; }
+
+        .pod-details {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .pod-detail {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .pod-detail .label { color: #555; }
+        .pod-detail .value { color: #aaa; }
+
+        .category-tag {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #1a1a2e;
+            color: #7b2ff7;
+            font-weight: 600;
+        }
+
+        .refresh-info {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 11px;
+            color: #444;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+        .loading .pod-name { animation: pulse 1.5s infinite; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Multi-Claw</h1>
+        <div class="subtitle">12 Isolated Telegram Bots for Google Calendar</div>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat"><div class="dot dot-healthy"></div><span id="count-healthy">0</span> healthy</div>
+        <div class="stat"><div class="dot dot-unhealthy"></div><span id="count-unhealthy">0</span> unhealthy</div>
+        <div class="stat"><div class="dot dot-offline"></div><span id="count-offline">0</span> offline</div>
+        <div class="stat"><div class="dot dot-disabled"></div><span id="count-disabled">0</span> disabled</div>
+    </div>
+
+    <div class="grid" id="pods-grid"></div>
+
+    <div class="refresh-info">Auto-refresh every 10s</div>
+
+    <script>
+        const grid = document.getElementById('pods-grid');
+
+        const placeholders = [
+            'mini-claw','pico-claw','nano-claw','tiny-claw',
+            'open-claw','zero-claw','titan-claw','kaf-claw',
+            'safe-claw','null-claw','tinyagi','nanobot'
+        ];
+
+        function formatUptime(seconds) {
+            if (!seconds) return '\u2014';
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            if (h > 0) return h + 'h ' + m + 'm';
+            if (m > 0) return m + 'm ' + s + 's';
+            return s + 's';
+        }
+
+        function createDetailRow(label, value, isTag) {
+            const row = document.createElement('div');
+            row.className = 'pod-detail';
+            const lbl = document.createElement('span');
+            lbl.className = 'label';
+            lbl.textContent = label;
+            const val = document.createElement('span');
+            val.className = isTag ? 'category-tag' : 'value';
+            val.textContent = value;
+            row.appendChild(lbl);
+            row.appendChild(val);
+            return row;
+        }
+
+        function createPodCard(p) {
+            const st = p.status || 'loading';
+            const card = document.createElement('div');
+            card.className = 'pod-card ' + st;
+
+            const header = document.createElement('div');
+            header.className = 'pod-header';
+            const name = document.createElement('span');
+            name.className = 'pod-name';
+            name.textContent = p.name;
+            const status = document.createElement('span');
+            status.className = 'pod-status ' + st;
+            status.textContent = st;
+            header.appendChild(name);
+            header.appendChild(status);
+
+            const details = document.createElement('div');
+            details.className = 'pod-details';
+            details.appendChild(createDetailRow('Provider', p.provider || '\u2014', false));
+            details.appendChild(createDetailRow('Model', p.model || '\u2014', false));
+            details.appendChild(createDetailRow('Category', p.category || '\u2014', true));
+            details.appendChild(createDetailRow('Uptime', formatUptime(p.uptime), false));
+
+            card.appendChild(header);
+            card.appendChild(details);
+            return card;
+        }
+
+        function renderPods(pods) {
+            let healthy = 0, unhealthy = 0, offline = 0, disabled = 0;
+            grid.replaceChildren();
+
+            pods.forEach(function(p) {
+                const st = p.status || 'loading';
+                if (st === 'healthy') healthy++;
+                else if (st === 'unhealthy') unhealthy++;
+                else if (st === 'disabled') disabled++;
+                else offline++;
+                grid.appendChild(createPodCard(p));
+            });
+
+            document.getElementById('count-healthy').textContent = healthy;
+            document.getElementById('count-unhealthy').textContent = unhealthy;
+            document.getElementById('count-offline').textContent = offline;
+            document.getElementById('count-disabled').textContent = disabled;
+        }
+
+        renderPods(placeholders.map(function(name) { return {name: name, status: 'loading'}; }));
+
+        async function refresh() {
+            try {
+                const r = await fetch('/api/pods');
+                const pods = await r.json();
+                if (Array.isArray(pods)) renderPods(pods);
+            } catch(e) { /* retry on next interval */ }
+        }
+
+        refresh();
+        setInterval(refresh, 10000);
+    </script>
+</body>
+</html>

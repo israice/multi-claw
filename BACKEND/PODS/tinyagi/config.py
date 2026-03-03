@@ -1,0 +1,5 @@
+POD_NAME = "tinyagi"
+AI_PROVIDER = "groq"
+AI_MODEL = "llama-3.1-70b-versatile"
+API_KEY_ENV = "GROQ_API_KEY"
+TELEGRAM_TOKEN_ENV = "TELEGRAM_TOKEN_TINYAGI"

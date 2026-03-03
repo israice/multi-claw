@@ -1,0 +1,5 @@
+POD_NAME = "titan-claw"
+AI_PROVIDER = "google"
+AI_MODEL = "gemini-2.0-flash-lite"
+API_KEY_ENV = "GOOGLE_AI_API_KEY"
+TELEGRAM_TOKEN_ENV = "TELEGRAM_TOKEN_TITAN_CLAW"

@@ -1,0 +1,342 @@
+services:
+  # ═══════════════════════════════════════════════════════════════
+  # POD 1: mini-claw — OpenAI GPT-4o
+  # ═══════════════════════════════════════════════════════════════
+  mini-claw:
+    build:
+      context: .
+      dockerfile: BACKEND/PODS/mini-claw/Dockerfile
+    container_name: mini-claw
+    profiles: ["mini-claw"]
+    environment:
+      - TELEGRAM_TOKEN_MINI_CLAW=${TELEGRAM_TOKEN_MINI_CLAW}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_CALENDAR_ID=${GOOGLE_CALENDAR_ID}
+      - GOOGLE_SERVICE_ACCOUNT_JSON=${GOOGLE_SERVICE_ACCOUNT_JSON}
+    networks:
+      - net-mini-claw
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ═══════════════════════════════════════════════════════════════
+  # POD 2: pico-claw — Anthropic Claude Sonnet
+  # ═══════════════════════════════════════════════════════════════
+  pico-claw:
+    build:
+      context: .
+      dockerfile: BACKEND/PODS/pico-claw/Dockerfile
+    container_name: pico-claw
+    profiles: ["pico-claw"]
+    environment:
+      - TELEGRAM_TOKEN_PICO_CLAW=${TELEGRAM_TOKEN_PICO_CLAW}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GOOGLE_CALENDAR_ID=${GOOGLE_CALENDAR_ID}
+      - GOOGLE_SERVICE_ACCOUNT_JSON=${GOOGLE_SERVICE_ACCOUNT_JSON}
+    networks:
+      - net-pico-claw
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ═══════════════════════════════════════════════════════════════
+  # POD 3: nano-claw — Google Gemini Pro
+  # ═══════════════════════════════════════════════════════════════
+  nano-claw:
+    build:
+      context: .
+      dockerfile: BACKEND/PODS/nano-claw/Dockerfile
+    container_name: nano-claw
+    profiles: ["nano-claw"]
+    environment:
+      - TELEGRAM_TOKEN_NANO_CLAW=${TELEGRAM_TOKEN_NANO_CLAW}
+      - GOOGLE_AI_API_KEY=${GOOGLE_AI_API_KEY}
+      - GOOGLE_CALENDAR_ID=${GOOGLE_CALENDAR_ID}
+      - GOOGLE_SERVICE_ACCOUNT_JSON=${GOOGLE_SERVICE_ACCOUNT_JSON}
+    networks:
+      - net-nano-claw
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ═══════════════════════════════════════════════════════════════
+  # POD 4: tiny-claw — Mistral Large
+  # ═══════════════════════════════════════════════════════════════
+  tiny-claw:
+    build:
+      context: .
+      dockerfile: BACKEND/PODS/tiny-claw/Dockerfile
+    container_name: tiny-claw
+    profiles: ["tiny-claw"]
+    environment:
+      - TELEGRAM_TOKEN_TINY_CLAW=${TELEGRAM_TOKEN_TINY_CLAW}
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY}
+      - GOOGLE_CALENDAR_ID=${GOOGLE_CALENDAR_ID}
+      - GOOGLE_SERVICE_ACCOUNT_JSON=${GOOGLE_SERVICE_ACCOUNT_JSON}
+    networks:
+      - net-tiny-claw
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ═══════════════════════════════════════════════════════════════
+  # POD 5: open-claw — OpenAI GPT-4o-mini
+  # ═══════════════════════════════════════════════════════════════
+  open-claw:
+    build:
+      context: .
+      dockerfile: BACKEND/PODS/open-claw/Dockerfile
+    container_name: open-claw
+    profiles: ["open-claw"]
+    environment:
+      - TELEGRAM_TOKEN_OPEN_CLAW=${TELEGRAM_TOKEN_OPEN_CLAW}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_CALENDAR_ID=${GOOGLE_CALENDAR_ID}
+      - GOOGLE_SERVICE_ACCOUNT_JSON=${GOOGLE_SERVICE_ACCOUNT_JSON}
+    networks:
+      - net-open-claw
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ═══════════════════════════════════════════════════════════════
+  # POD 6: zero-claw — Anthropic Claude Haiku
+  # ═══════════════════════════════════════════════════════════════
+  zero-claw:
+    build:
+      context: .
+      dockerfile: BACKEND/PODS/zero-claw/Dockerfile
+    container_name: zero-claw
+    profiles: ["zero-claw"]
+    environment:
+      - TELEGRAM_TOKEN_ZERO_CLAW=${TELEGRAM_TOKEN_ZERO_CLAW}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GOOGLE_CALENDAR_ID=${GOOGLE_CALENDAR_ID}
+      - GOOGLE_SERVICE_ACCOUNT_JSON=${GOOGLE_SERVICE_ACCOUNT_JSON}
+    networks:
+      - net-zero-claw
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ═══════════════════════════════════════════════════════════════
+  # POD 7: titan-claw — Google Gemini Flash
+  # ═══════════════════════════════════════════════════════════════
+  titan-claw:
+    build:
+      context: .
+      dockerfile: BACKEND/PODS/titan-claw/Dockerfile
+    container_name: titan-claw
+    profiles: ["titan-claw"]
+    environment:
+      - TELEGRAM_TOKEN_TITAN_CLAW=${TELEGRAM_TOKEN_TITAN_CLAW}
+      - GOOGLE_AI_API_KEY=${GOOGLE_AI_API_KEY}
+      - GOOGLE_CALENDAR_ID=${GOOGLE_CALENDAR_ID}
+      - GOOGLE_SERVICE_ACCOUNT_JSON=${GOOGLE_SERVICE_ACCOUNT_JSON}
+    networks:
+      - net-titan-claw
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ═══════════════════════════════════════════════════════════════
+  # POD 8: kaf-claw — xAI Grok-2
+  # ═══════════════════════════════════════════════════════════════
+  kaf-claw:
+    build:
+      context: .
+      dockerfile: BACKEND/PODS/kaf-claw/Dockerfile
+    container_name: kaf-claw
+    profiles: ["kaf-claw"]
+    environment:
+      - TELEGRAM_TOKEN_KAF_CLAW=${TELEGRAM_TOKEN_KAF_CLAW}
+      - XAI_API_KEY=${XAI_API_KEY}
+      - GOOGLE_CALENDAR_ID=${GOOGLE_CALENDAR_ID}
+      - GOOGLE_SERVICE_ACCOUNT_JSON=${GOOGLE_SERVICE_ACCOUNT_JSON}
+    networks:
+      - net-kaf-claw
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ═══════════════════════════════════════════════════════════════
+  # POD 9: safe-claw — Anthropic Claude Opus
+  # ═══════════════════════════════════════════════════════════════
+  safe-claw:
+    build:
+      context: .
+      dockerfile: BACKEND/PODS/safe-claw/Dockerfile
+    container_name: safe-claw
+    profiles: ["safe-claw"]
+    environment:
+      - TELEGRAM_TOKEN_SAFE_CLAW=${TELEGRAM_TOKEN_SAFE_CLAW}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GOOGLE_CALENDAR_ID=${GOOGLE_CALENDAR_ID}
+      - GOOGLE_SERVICE_ACCOUNT_JSON=${GOOGLE_SERVICE_ACCOUNT_JSON}
+    networks:
+      - net-safe-claw
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ═══════════════════════════════════════════════════════════════
+  # POD 10: null-claw — DeepSeek
+  # ═══════════════════════════════════════════════════════════════
+  null-claw:
+    build:
+      context: .
+      dockerfile: BACKEND/PODS/null-claw/Dockerfile
+    container_name: null-claw
+    profiles: ["null-claw"]
+    environment:
+      - TELEGRAM_TOKEN_NULL_CLAW=${TELEGRAM_TOKEN_NULL_CLAW}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - GOOGLE_CALENDAR_ID=${GOOGLE_CALENDAR_ID}
+      - GOOGLE_SERVICE_ACCOUNT_JSON=${GOOGLE_SERVICE_ACCOUNT_JSON}
+    networks:
+      - net-null-claw
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ═══════════════════════════════════════════════════════════════
+  # POD 11: tinyagi — Groq Llama
+  # ═══════════════════════════════════════════════════════════════
+  tinyagi:
+    build:
+      context: .
+      dockerfile: BACKEND/PODS/tinyagi/Dockerfile
+    container_name: tinyagi
+    profiles: ["tinyagi"]
+    environment:
+      - TELEGRAM_TOKEN_TINYAGI=${TELEGRAM_TOKEN_TINYAGI}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - GOOGLE_CALENDAR_ID=${GOOGLE_CALENDAR_ID}
+      - GOOGLE_SERVICE_ACCOUNT_JSON=${GOOGLE_SERVICE_ACCOUNT_JSON}
+    networks:
+      - net-tinyagi
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ═══════════════════════════════════════════════════════════════
+  # POD 12: nanobot — Together Mixtral
+  # ═══════════════════════════════════════════════════════════════
+  nanobot:
+    build:
+      context: .
+      dockerfile: BACKEND/PODS/nanobot/Dockerfile
+    container_name: nanobot
+    profiles: ["nanobot"]
+    environment:
+      - TELEGRAM_TOKEN_NANOBOT=${TELEGRAM_TOKEN_NANOBOT}
+      - TOGETHER_API_KEY=${TOGETHER_API_KEY}
+      - GOOGLE_CALENDAR_ID=${GOOGLE_CALENDAR_ID}
+      - GOOGLE_SERVICE_ACCOUNT_JSON=${GOOGLE_SERVICE_ACCOUNT_JSON}
+    networks:
+      - net-nanobot
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ═══════════════════════════════════════════════════════════════
+  # ORCHESTRATOR — Dashboard (всегда запускается)
+  # ═══════════════════════════════════════════════════════════════
+  orchestrator:
+    build: .
+    container_name: multi-claw-dashboard
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+    volumes:
+      - ./FRONTEND:/app/FRONTEND
+      - ./SETTINGS.py:/app/SETTINGS.py
+    networks:
+      - net-mini-claw
+      - net-pico-claw
+      - net-nano-claw
+      - net-tiny-claw
+      - net-open-claw
+      - net-zero-claw
+      - net-titan-claw
+      - net-kaf-claw
+      - net-safe-claw
+      - net-null-claw
+      - net-tinyagi
+      - net-nanobot
+    restart: unless-stopped
+
+networks:
+  net-mini-claw:
+    driver: bridge
+  net-pico-claw:
+    driver: bridge
+  net-nano-claw:
+    driver: bridge
+  net-tiny-claw:
+    driver: bridge
+  net-open-claw:
+    driver: bridge
+  net-zero-claw:
+    driver: bridge
+  net-titan-claw:
+    driver: bridge
+  net-kaf-claw:
+    driver: bridge
+  net-safe-claw:
+    driver: bridge
+  net-null-claw:
+    driver: bridge
+  net-tinyagi:
+    driver: bridge
+  net-nanobot:
+    driver: bridge

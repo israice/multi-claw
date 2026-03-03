@@ -1,0 +1,5 @@
+POD_NAME = "null-claw"
+AI_PROVIDER = "deepseek"
+AI_MODEL = "deepseek-chat"
+API_KEY_ENV = "DEEPSEEK_API_KEY"
+TELEGRAM_TOKEN_ENV = "TELEGRAM_TOKEN_NULL_CLAW"

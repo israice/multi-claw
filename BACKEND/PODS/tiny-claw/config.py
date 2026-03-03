@@ -1,0 +1,5 @@
+POD_NAME = "tiny-claw"
+AI_PROVIDER = "mistral"
+AI_MODEL = "mistral-large-latest"
+API_KEY_ENV = "MISTRAL_API_KEY"
+TELEGRAM_TOKEN_ENV = "TELEGRAM_TOKEN_TINY_CLAW"

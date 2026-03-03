@@ -1,0 +1,5 @@
+python-telegram-bot==21.6
+mistralai>=1.0
+google-api-python-client
+google-auth
+aiohttp

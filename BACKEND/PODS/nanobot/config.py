@@ -1,0 +1,5 @@
+POD_NAME = "nanobot"
+AI_PROVIDER = "together"
+AI_MODEL = "mistralai/Mixtral-8x22B-Instruct-v0.1"
+API_KEY_ENV = "TOGETHER_API_KEY"
+TELEGRAM_TOKEN_ENV = "TELEGRAM_TOKEN_NANOBOT"
