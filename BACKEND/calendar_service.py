@@ -12,10 +12,14 @@ class CalendarService:
     """Google Calendar API wrapper (synchronous, wrap calls with asyncio.to_thread)."""
 
     def __init__(self):
-        creds_json = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "")
         self.calendar_id = os.environ.get("GOOGLE_CALENDAR_ID", "primary")
+        creds_file = os.environ.get("GOOGLE_SERVICE_ACCOUNT_FILE", "")
+        creds_json = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "")
 
-        if creds_json:
+        if creds_file and os.path.exists(creds_file):
+            creds = Credentials.from_service_account_file(creds_file, scopes=SCOPES)
+            self.service = build("calendar", "v3", credentials=creds)
+        elif creds_json:
             info = json.loads(creds_json)
             creds = Credentials.from_service_account_info(info, scopes=SCOPES)
             self.service = build("calendar", "v3", credentials=creds)

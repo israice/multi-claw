@@ -17,13 +17,20 @@ logger = logging.getLogger(__name__)
 class BaseBot:
     """Telegram bot with calendar commands, powered by a pluggable AI provider."""
 
-    def __init__(self, token: str, pod_name: str, ai: AIProvider, health_port: int = 8080):
+    def __init__(self, token: str, pod_name: str, ai: AIProvider, health_port: int = 8080, topic_id: int | None = None):
         self.token = token
         self.pod_name = pod_name
         self.ai = ai
+        self.topic_id = topic_id
         self.calendar = CalendarService()
         self.health = HealthServer(port=health_port)
         self.start_time = time.time()
+
+    def _is_my_topic(self, update: Update) -> bool:
+        """Check if message belongs to the configured topic (or no filter set)."""
+        if self.topic_id is None:
+            return True
+        return getattr(update.message, "message_thread_id", None) == self.topic_id
 
     def _system_prompt(self) -> str:
         return SYSTEM_PROMPT.format(
@@ -33,6 +40,8 @@ class BaseBot:
         )
 
     async def cmd_start(self, update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+        if not self._is_my_topic(update):
+            return
         await update.message.reply_text(
             f"👋 Привет! Я **{self.pod_name}**\n"
             f"🤖 Модель: `{self.ai.model}` ({self.ai.provider_name})\n\n"
@@ -42,6 +51,8 @@ class BaseBot:
         )
 
     async def cmd_help(self, update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+        if not self._is_my_topic(update):
+            return
         await update.message.reply_text(
             "📋 **Команды:**\n"
             "/today — события на сегодня\n"
@@ -55,6 +66,8 @@ class BaseBot:
         )
 
     async def cmd_today(self, update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+        if not self._is_my_topic(update):
+            return
         today = datetime.utcnow().strftime("%Y-%m-%d")
         try:
             events = await asyncio.to_thread(self.calendar.list_events, today, today)
@@ -71,6 +84,8 @@ class BaseBot:
             await update.message.reply_text(f"❌ Ошибка: {ex}")
 
     async def cmd_week(self, update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+        if not self._is_my_topic(update):
+            return
         today = datetime.utcnow()
         start = today.strftime("%Y-%m-%d")
         end = (today + timedelta(days=7)).strftime("%Y-%m-%d")
@@ -90,6 +105,8 @@ class BaseBot:
             await update.message.reply_text(f"❌ Ошибка: {ex}")
 
     async def cmd_new(self, update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+        if not self._is_my_topic(update):
+            return
         text = update.message.text.replace("/new", "").strip()
         if not text:
             await update.message.reply_text("Опиши событие, например:\n`/new Встреча с Иваном завтра в 14:00`", parse_mode="Markdown")
@@ -97,6 +114,8 @@ class BaseBot:
         await self._process_with_ai(update, f"Create a calendar event: {text}")
 
     async def cmd_delete(self, update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+        if not self._is_my_topic(update):
+            return
         today = datetime.utcnow().strftime("%Y-%m-%d")
         end = (datetime.utcnow() + timedelta(days=7)).strftime("%Y-%m-%d")
         try:
@@ -113,6 +132,8 @@ class BaseBot:
             await update.message.reply_text(f"❌ Ошибка: {ex}")
 
     async def cmd_free(self, update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+        if not self._is_my_topic(update):
+            return
         text = update.message.text.replace("/free", "").strip()
         date = text if text else datetime.utcnow().strftime("%Y-%m-%d")
         try:
@@ -129,6 +150,8 @@ class BaseBot:
             await update.message.reply_text(f"❌ Ошибка: {ex}")
 
     async def cmd_status(self, update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+        if not self._is_my_topic(update):
+            return
         uptime = int(time.time() - self.start_time)
         h, m = divmod(uptime // 60, 60)
         s = uptime % 60
@@ -142,6 +165,11 @@ class BaseBot:
         )
 
     async def handle_message(self, update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+        thread_id = getattr(update.message, "message_thread_id", None)
+        if thread_id:
+            logger.info(f"[{self.pod_name}] message_thread_id={thread_id}")
+        if not self._is_my_topic(update):
+            return
         text = update.message.text
         if not text:
             return

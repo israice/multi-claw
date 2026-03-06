@@ -1,22 +1,43 @@
 import asyncio
+import json
+import os
+
 import aiohttp
 
-from SETTINGS import PODS_REGISTRY
+from SETTINGS import PODS_CONFIG, PODS_REGISTRY
+
+# Provider display names
+_PROVIDER_DISPLAY = {
+    "openai": "OpenAI",
+    "anthropic": "Anthropic",
+    "google": "Google",
+    "mistral": "Mistral",
+    "deepseek": "DeepSeek",
+    "groq": "Groq",
+    "together": "Together",
+    "xai": "xAI",
+}
 
 PODS = [
-    {"name": "mini-claw", "host": "mini-claw", "port": 8080, "model": "gpt-4o", "provider": "OpenAI", "category": "Lightweight"},
-    {"name": "pico-claw", "host": "pico-claw", "port": 8080, "model": "claude-sonnet-4-6", "provider": "Anthropic", "category": "Lightweight"},
-    {"name": "nano-claw", "host": "nano-claw", "port": 8080, "model": "gemini-2.0-flash", "provider": "Google", "category": "Lightweight"},
-    {"name": "tiny-claw", "host": "tiny-claw", "port": 8080, "model": "mistral-large", "provider": "Mistral", "category": "Lightweight"},
-    {"name": "open-claw", "host": "open-claw", "port": 8080, "model": "gpt-4o-mini", "provider": "OpenAI", "category": "Full Runtime"},
-    {"name": "zero-claw", "host": "zero-claw", "port": 8080, "model": "claude-haiku-4-5", "provider": "Anthropic", "category": "Full Runtime"},
-    {"name": "titan-claw", "host": "titan-claw", "port": 8080, "model": "gemini-flash-lite", "provider": "Google", "category": "Full Runtime"},
-    {"name": "kaf-claw", "host": "kaf-claw", "port": 8080, "model": "grok-2", "provider": "xAI", "category": "Full Runtime"},
-    {"name": "safe-claw", "host": "safe-claw", "port": 8080, "model": "claude-opus-4-6", "provider": "Anthropic", "category": "Security"},
-    {"name": "null-claw", "host": "null-claw", "port": 8080, "model": "deepseek-chat", "provider": "DeepSeek", "category": "Security"},
-    {"name": "tinyagi", "host": "tinyagi", "port": 8080, "model": "llama-3.1-70b", "provider": "Groq", "category": "Experimental"},
-    {"name": "nanobot", "host": "nanobot", "port": 8080, "model": "mixtral-8x22b", "provider": "Together", "category": "Experimental"},
+    {
+        "name": name,
+        "host": name,
+        "port": 8080,
+        "model": cfg["model"],
+        "provider": _PROVIDER_DISPLAY.get(cfg["provider"], cfg["provider"]),
+        "category": cfg["category"],
+    }
+    for name, cfg in PODS_CONFIG.items()
 ]
+
+
+def _is_local() -> bool:
+    return os.environ.get("MULTI_CLAW_LOCAL") == "1"
+
+
+def _local_pod_ports() -> dict[str, int]:
+    raw = os.environ.get("LOCAL_POD_PORTS", "{}")
+    return json.loads(raw)
 
 
 def is_pod_enabled(name: str) -> bool:
@@ -28,7 +49,18 @@ async def check_pod(pod: dict) -> dict:
     if not is_pod_enabled(pod["name"]):
         return {**pod, "status": "disabled", "uptime": 0}
 
-    url = f"http://{pod['host']}:{pod['port']}/health"
+    # In local mode, bots run on localhost with unique ports
+    if _is_local():
+        port_map = _local_pod_ports()
+        port = port_map.get(pod["name"])
+        if port is None:
+            return {**pod, "status": "offline", "uptime": 0}
+        host = "127.0.0.1"
+    else:
+        host = pod["host"]
+        port = pod["port"]
+
+    url = f"http://{host}:{port}/health"
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(url, timeout=aiohttp.ClientTimeout(total=5)) as resp:

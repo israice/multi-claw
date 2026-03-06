@@ -1,7 +1,12 @@
 # START
 pip install -r requirements.txt
 
-python run.py
+docker compose down && python run.py compose
+
+python run.py compose
+
+# CLEAN
+docker builder prune -f && python run.py compose
 
 # RECOVERY
 git log --oneline -n 5
@@ -22,3 +27,4 @@ python run.py
 
 # DEV LOG
 v0.0.1 - first commit 03.03.2026
+v0.0.2 - added dashboard page and 2 active telegram bots tested

@@ -1,19 +1,3 @@
-from .openai_provider import OpenAIProvider
-from .anthropic_provider import AnthropicProvider
-from .google_provider import GoogleProvider
-from .mistral_provider import MistralProvider
-from .xai_provider import XAIProvider
-from .deepseek_provider import DeepSeekProvider
-from .groq_provider import GroqProvider
-from .together_provider import TogetherProvider
-
-__all__ = [
-    "OpenAIProvider",
-    "AnthropicProvider",
-    "GoogleProvider",
-    "MistralProvider",
-    "XAIProvider",
-    "DeepSeekProvider",
-    "GroqProvider",
-    "TogetherProvider",
-]
+# Providers are loaded dynamically via BACKEND.provider_factory.create_provider().
+# Each provider class lives in its own module (e.g., openai_provider.py).
+# Lazy imports ensure only the required SDK is loaded at runtime.
