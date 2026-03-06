@@ -16,7 +16,7 @@ class CalendarService:
         creds_file = os.environ.get("GOOGLE_SERVICE_ACCOUNT_FILE", "")
         creds_json = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "")
 
-        if creds_file and os.path.exists(creds_file):
+        if creds_file and os.path.isfile(creds_file):
             creds = Credentials.from_service_account_file(creds_file, scopes=SCOPES)
             self.service = build("calendar", "v3", credentials=creds)
         elif creds_json:

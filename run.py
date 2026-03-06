@@ -192,7 +192,7 @@ def local_up():
     logging.getLogger("telegram.ext.Application").setLevel(logging.CRITICAL + 1)
 
     async def _run_all():
-        tasks = [asyncio.create_task(_watch_settings())]
+        tasks: list[asyncio.Task] = [asyncio.create_task(_watch_settings())]
         for name in enabled:
             cfg = PODS_CONFIG[name]
             tasks.append(asyncio.create_task(

@@ -30,7 +30,7 @@ async def main():
         api_key=api_key,
     )
 
-    bot = BaseBot(token=token, pod_name=pod_name, ai=ai)
+    bot = BaseBot(token=token, pod_name=pod_name, ai=ai, topic_id=cfg.get("topic_id"))
     await bot.run()
 
 
