@@ -4,8 +4,8 @@ APP_TITLE = "Multi-Claw Dashboard"
 TELEGRAM_GROUP_NICKNAME = "test"  # группа будет multi-claw-test
 HOST = os.environ.get("HOST", "127.0.0.1")
 PORT = int(os.environ.get("PORT", 8000))
-RELOAD = True
-LIVE_RELOAD = True
+RELOAD = False
+LIVE_RELOAD = False
 LIVE_RELOAD_INTERVAL = 5
 
 # ═══════════════════════════════════════════════════════════════

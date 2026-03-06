@@ -23,6 +23,16 @@ x-pod-common: &pod-common
     timeout: 5s
     retries: 3
     start_period: 30s
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+  deploy:
+    resources:
+      limits:
+        memory: 512M
+        cpus: "1"
 
 services:
   # ═══════════════════════════════════════════════════════════════
@@ -188,6 +198,22 @@ services:
       - net-tinyagi
       - net-nanobot
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/enabled')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
 
 networks:
   net-mini-claw:

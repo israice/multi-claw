@@ -1,0 +1,15 @@
+.git
+.gitignore
+.env
+.env.*
+.claude
+*.pyc
+__pycache__
+.pytest_cache
+*.session
+.venv
+venv/
+DATA/
+TOOLS/
+*.egg-info
+credentials/

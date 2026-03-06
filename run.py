@@ -41,7 +41,7 @@ def ensure_dependencies(requirements_file: str):
         return
 
     missing = []
-    for line in req_path.read_text().splitlines():
+    for line in req_path.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if not line or line.startswith("#"):
             continue
@@ -78,16 +78,39 @@ def docker_available() -> bool:
         return False
 
 
+def _sync_compose_profiles():
+    """Write COMPOSE_PROFILES to .env so bare 'docker compose up' works."""
+    env_path = Path(__file__).parent / ".env"
+    profiles_value = ",".join(get_enabled_pods())
+
+    if env_path.exists():
+        text = env_path.read_text(encoding="utf-8")
+        lines = text.splitlines()
+        found = False
+        for i, line in enumerate(lines):
+            if line.startswith("COMPOSE_PROFILES=") or line.startswith("# COMPOSE_PROFILES="):
+                lines[i] = f"COMPOSE_PROFILES={profiles_value}"
+                found = True
+                break
+        if not found:
+            lines.append(f"\n# Auto-generated from SETTINGS.py (python run.py sync)")
+            lines.append(f"COMPOSE_PROFILES={profiles_value}")
+        env_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    else:
+        env_path.write_text(f"COMPOSE_PROFILES={profiles_value}\n", encoding="utf-8")
+
+    print(f"Synced COMPOSE_PROFILES={profiles_value} → .env")
+
+
 def compose_up():
     """Launch docker compose with only enabled pod profiles."""
+    _sync_compose_profiles()
+
     enabled = get_enabled_pods()
     if not enabled:
         print("No pods enabled in SETTINGS.py — starting only orchestrator.")
 
-    cmd = ["docker", "compose"]
-    for pod in enabled:
-        cmd += ["--profile", pod]
-    cmd += ["up", "-d", "--build"]
+    cmd = ["docker", "compose", "up", "-d", "--build"]
 
     print(f"Enabled pods: {enabled}")
     print(f"Running: {' '.join(cmd)}")

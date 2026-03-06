@@ -4,6 +4,8 @@ python BACKEND\create_telegram_group_with_topics.py
 
 pip install -r requirements.txt
 
+docker compose --profile mini-claw --profile pico-claw up -d --build
+docker compose up -d --build
 docker compose down && python run.py compose
 
 python run.py compose
@@ -32,4 +34,5 @@ python run.py
 v0.0.1 - first commit 03.03.2026
 v0.0.2 - added dashboard page and 2 active telegram bots tested
 v0.0.3 - added screenshots and creating telegram group script
+v0.0.4 - added docker support for ubuntu servers
 
