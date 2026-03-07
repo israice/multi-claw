@@ -189,7 +189,7 @@ Dashboard запустится на http://localhost:8000, но без Docker po
 
 ## Healthcheck
 
-- Каждый pod запускает HTTP-сервер на `:8080` с endpoint `/health`
+- Каждый pod запускает HTTP-сервер на `:5000` с endpoint `/health`
 - Docker healthcheck опрашивает `/health` каждые 15 секунд
 - Dashboard автоматически обновляет статусы каждые 10 секунд
 

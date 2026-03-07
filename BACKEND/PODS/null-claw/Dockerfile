@@ -8,6 +8,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY BACKEND/ ./BACKEND/
 COPY BACKEND/PODS/null-claw/ ./
 
-EXPOSE 8080
+EXPOSE 5000
 
 CMD ["python", "bot.py"]

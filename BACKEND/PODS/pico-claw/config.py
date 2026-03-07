@@ -1,5 +1,0 @@
-POD_NAME = "pico-claw"
-AI_PROVIDER = "anthropic"
-AI_MODEL = "claude-sonnet-4-6"
-API_KEY_ENV = "ANTHROPIC_API_KEY"
-TELEGRAM_TOKEN_ENV = "TELEGRAM_TOKEN_PICO_CLAW"

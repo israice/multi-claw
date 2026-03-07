@@ -6,7 +6,7 @@ from aiohttp import web
 class HealthServer:
     """Simple HTTP server for Docker healthcheck on /health."""
 
-    def __init__(self, port: int = 8080):
+    def __init__(self, port: int = 5000):
         self.port = port
         self.start_time = time.time()
         self.healthy = True

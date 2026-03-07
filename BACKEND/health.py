@@ -22,7 +22,7 @@ PODS = [
     {
         "name": name,
         "host": name,
-        "port": 8080,
+        "port": 5000,
         "model": cfg["model"],
         "provider": _PROVIDER_DISPLAY.get(cfg["provider"], cfg["provider"]),
         "category": cfg["category"],

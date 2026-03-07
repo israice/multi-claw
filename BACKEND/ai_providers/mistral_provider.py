@@ -9,15 +9,12 @@ class MistralProvider(AIProvider):
         super().__init__(model, api_key)
         self.client = Mistral(api_key=api_key)
 
-    async def chat(self, message: str, system_prompt: str) -> str:
+    async def chat(self, messages: list[dict], system_prompt: str) -> str:
         response = await self.client.chat.complete_async(
             model=self.model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": message},
-            ],
+            messages=[{"role": "system", "content": system_prompt}] + messages,
             temperature=0.3,
-            max_tokens=1024,
+            max_tokens=2048,
         )
         return response.choices[0].message.content or ""
 

@@ -9,6 +9,8 @@ x-pod-env: &pod-env
   TOGETHER_API_KEY: ${TOGETHER_API_KEY}
   GOOGLE_CALENDAR_ID: ${GOOGLE_CALENDAR_ID}
   GOOGLE_SERVICE_ACCOUNT_FILE: /app/credentials/service-account.json
+  CALENDAR_TIMEZONE: ${CALENDAR_TIMEZONE:-UTC}
+  TELEGRAM_ALLOW_FROM: ${TELEGRAM_ALLOW_FROM:-}
 
 x-pod-common: &pod-common
   build:
@@ -18,7 +20,7 @@ x-pod-common: &pod-common
     - ./credentials/service-account.json:/app/credentials/service-account.json:ro
   restart: unless-stopped
   healthcheck:
-    test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+    test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
     interval: 15s
     timeout: 5s
     retries: 3

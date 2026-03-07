@@ -1,5 +1,0 @@
-python-telegram-bot==21.6
-anthropic>=0.39
-google-api-python-client
-google-auth
-aiohttp
